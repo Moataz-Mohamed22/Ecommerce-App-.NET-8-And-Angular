@@ -13,6 +13,7 @@ namespace Ecommerce.Core.Entities.Product
         public string Description { get; set; } = string.Empty;
         public virtual List<Photo> photos { get; set; }
         public decimal Price { get; set; }
+        public decimal OldPrice { get; set; }
 
         public int CategoryId { get; set; }
         [ForeignKey(nameof(CategoryId))]

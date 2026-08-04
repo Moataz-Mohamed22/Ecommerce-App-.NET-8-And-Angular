@@ -71,6 +71,14 @@ namespace Ecommerce.Infrastructure.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("Photos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ImageName = "Test",
+                            ProductId = 1
+                        });
                 });
 
             modelBuilder.Entity("Ecommerce.Core.Entities.Product.Product", b =>
@@ -93,6 +101,9 @@ namespace Ecommerce.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<decimal>("OldPrice")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -109,6 +120,7 @@ namespace Ecommerce.Infrastructure.Migrations
                             CategoryId = 1,
                             Description = "test",
                             Name = "test",
+                            OldPrice = 0m,
                             Price = 0m
                         });
                 });

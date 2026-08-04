@@ -1,4 +1,8 @@
+using Ecommerce.Core.Services;
 using Ecommerce.Infrastructure;
+using Ecommerce.Infrastructure.Repositories.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 namespace Ecommerce.API
 {
     public class Program
@@ -14,6 +18,8 @@ namespace Ecommerce.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.infrastructureConfiguration(builder.Configuration);
+            builder.Services.AddAutoMapper(cfg => { }, typeof(Program).Assembly);
+            builder.Services.AddScoped<IImageManagementService, ImageManagementService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

@@ -1,4 +1,5 @@
-﻿using Ecommerce.Core.Entities.Product;
+﻿using Ecommerce.Core.DTO;
+using Ecommerce.Core.Entities.Product;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,7 @@ namespace Ecommerce.Core.Interfaces
 {
     public interface IProductRepository:IGenericRepository<Product>
     {
+      public  Task<bool>AddAsync (AddProductDto dto);
+        public Task<bool> UpdateAsync(UpdateProductDTO dTO);
     }
 }
