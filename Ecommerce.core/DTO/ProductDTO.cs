@@ -15,6 +15,7 @@ namespace Ecommerce.Core.DTO
         public string Description { get; set; } = string.Empty;
         public virtual List<PhotoDTO> photos { get; set; }
         public decimal Price { get; set; }
+        public decimal OldPrice { get; set; }
 
         public string CategoryName { get; set; } 
     }

@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 
 namespace Ecommerce.Core.Interfaces
 {
-    public interface IProductRepository:IGenericRepository<Product>
+    public interface IProductRepository : IGenericRepository<Product>
     {
-      public  Task<bool>AddAsync (AddProductDto dto);
+        public Task<IEnumerable<ProductDTO>> GetAllAsync(ProductParams productParams);
+        public Task<bool> AddAsync(AddProductDto dto);
         public Task<bool> UpdateAsync(UpdateProductDTO dTO);
+        public Task DeleteAsync(Product product);
     }
 }

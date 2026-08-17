@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Ecommerce.API.Helper;
 using Ecommerce.Core.DTO;
+using Ecommerce.Core.Entities.Product;
 using Ecommerce.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,26 +15,20 @@ namespace Ecommerce.API.Controllers
         {
         }
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] ProductParams productParams)
         {
             try
             {
-
-                var products = await _work.ProductRepository.GetAllAsync(p => p.Category,
-p => p.photos);
-                var res = _mapper.Map<List<ProductDTO>>(products);
-                if (products == null)
-                    return BadRequest(new ResponseAPI(404, "Not Found Products"));
-                return Ok(res);
+                var products =
+                    await _work.ProductRepository.GetAllAsync(productParams);
+                var totalCount = await _work.ProductRepository.CountAsync();
+                return Ok(new Pagination<ProductDTO>(productParams.PageNumber,productParams.PageSize,totalCount,products));
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-
-
         }
-
         [HttpGet("get-by-id/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -86,6 +81,24 @@ p => p.photos);
             catch (Exception ex) {
                 return BadRequest(new ResponseAPI(400, ex.InnerException?.Message ?? ex.Message));
 
+            }
+        }
+
+        [HttpDelete("delete-product/{id}")]
+        public async Task <IActionResult>Delete (int id)
+        {
+            try
+            {
+                var product = await _work.ProductRepository
+                    .GetByIdAsync(id,m=>m.Category);
+                await _work.ProductRepository.DeleteAsync(product);
+                return Ok(new ResponseAPI(200, "Deleted Successfully"));
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(new ResponseAPI(400, ex.InnerException?.Message ?? ex.Message));
             }
         }
     }

@@ -24,6 +24,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         await _context.SaveChangesAsync();
     }
 
+
     public async Task DeleteAsync(int id)
     {
         var entity = await _context.Set<T>().FindAsync(id);
@@ -69,4 +70,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         _context.Entry(entity).State=EntityState.Modified;
         await _context.SaveChangesAsync();
     }
+
+    public async Task<int> CountAsync()
+    =>await _context.Set<T>().CountAsync();
 }
