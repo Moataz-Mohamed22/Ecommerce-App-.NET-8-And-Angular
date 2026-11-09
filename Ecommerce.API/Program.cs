@@ -2,9 +2,7 @@ using Ecommerce.API.Middleware;
 using Ecommerce.Core.Services;
 using Ecommerce.Infrastructure;
 using Ecommerce.Infrastructure.Repositories.Services;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
+using StackExchange.Redis;
 namespace Ecommerce.API
 {
     public class Program
@@ -19,6 +17,7 @@ namespace Ecommerce.API
             builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200"))); 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            //builder.Services.AddScoped<RedisCacheService>();
             builder.Services.AddMemoryCache();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -35,6 +34,7 @@ namespace Ecommerce.API
             }
             app.UseCors("CROSPolicy");
             app.UseMiddleware < ExceptionsMiddleware>();
+            app.UseStaticFiles();
             app.UseStatusCodePagesWithReExecute("/errors/{0}");
             app.UseHttpsRedirection();
 

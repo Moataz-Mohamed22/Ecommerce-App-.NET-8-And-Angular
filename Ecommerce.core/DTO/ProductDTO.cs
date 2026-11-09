@@ -11,6 +11,7 @@ namespace Ecommerce.Core.DTO
 {
     public record ProductDTO
     {
+        public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public virtual List<PhotoDTO> photos { get; set; }
@@ -25,8 +26,9 @@ namespace Ecommerce.Core.DTO
         public string ImageName { get; set; } =string.Empty;
         public int ProductId { get; set; }
     }
-    public record AddProductDto
+    public record AddProductDTO
     {
+       
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
@@ -34,9 +36,14 @@ namespace Ecommerce.Core.DTO
         public int CategoryId { get; set; }
         public IFormFileCollection Photo { get; set; }
     }
-    public record UpdateProductDTO : AddProductDto
+    public record UpdateProductDTO : AddProductDTO
     {
         public int Id { get; set; }
     }
+    public record ReturnProductDTO
+    {
+        public List<ProductDTO> Products { get; set; }
+        public int TotalCount { get; set; }
 
+    }
 }

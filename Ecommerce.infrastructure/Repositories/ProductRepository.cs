@@ -4,13 +4,6 @@ using Ecommerce.Core.Entities.Product;
 using Ecommerce.Core.Interfaces;
 using Ecommerce.Core.Services;
 using Ecommerce.Infrastructure.Data;
-using Microsoft.AspNetCore.Http;
-using Ecommerce.Infrastructure.Repositories.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Infrastructure.Repositories
@@ -27,78 +20,77 @@ namespace Ecommerce.Infrastructure.Repositories
             _imageManagementService = imageManagementService;
         }
 
-        public async Task<IEnumerable<ProductDTO>> GetAllAsync(ProductParams productParams)
+        public async Task<ReturnProductDTO> GetAllAsync(ProductParams productParams)
         {
             var query = _context.Products
                 .Include(p => p.Category)
                 .Include(p => p.photos)
                 .AsNoTracking();
-            // Filtering by word
-            if (!string.IsNullOrEmpty(productParams.Search))
 
+            // Search
+            if (!string.IsNullOrWhiteSpace(productParams.Search))
             {
-                //    query = query.Where(m =>
-                //        m.Name.ToLower().Contains(productParams.Search.ToLower()) ||
-                //        m.Description.ToLower().Contains(productParams.Search.ToLower())
-
                 var searchWords = productParams.Search
-                .ToLower()
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    .ToLower()
+                    .Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                query = query.Where(m =>
+                query = query.Where(p =>
                     searchWords.All(word =>
-                        m.Name.ToLower().Contains(word) ||
-                        m.Description.ToLower().Contains(word)
+                        p.Name.ToLower().Contains(word) ||
+                        (p.Description != null &&
+                         p.Description.ToLower().Contains(word))
                     )
                 );
             }
-            // Filtering by Category
+
+            // Category Filter
             if (productParams.CategoryId.HasValue)
             {
-                query = query.Where(p => p.CategoryId == productParams.CategoryId);
+                query = query.Where(p =>
+                    p.CategoryId == productParams.CategoryId.Value);
             }
 
-            // Sorting
-            if (!string.IsNullOrEmpty(productParams.Sort))
+            // Sorting By Price or Name
+            query = productParams.Sort switch
             {
-                query = productParams.Sort switch
-                {
-                    "PriceAsc" => query.OrderBy(p => p.Price),
+                "PriceAsc" => query.OrderBy(p => p.Price),
 
-                    "PriceDesc" => query.OrderByDescending(p => p.Price),
+                "PriceDesc" => query.OrderByDescending(p => p.Price),
 
-                    _ => query.OrderBy(p => p.Name)
-                };
-            }
-            else
-            {
-                query = query.OrderBy(p => p.Name);
-            }
+                _ => query.OrderBy(p => p.Name)
+            };
 
-            // Pagination
+            // Pagination Defaults
             productParams.PageNumber =
                 productParams.PageNumber > 0
-                ? productParams.PageNumber
-                : 1;
+                    ? productParams.PageNumber
+                    : 1;
 
             productParams.PageSize =
                 productParams.PageSize > 0
-                ? productParams.PageSize
-                : 3;
+                    ? productParams.PageSize
+                    : 3;
 
-            query = query
-                .Skip(productParams.PageSize * (productParams.PageNumber - 1))
-                .Take(productParams.PageSize);
+            // Total Count BEFORE Skip & Take
+            var totalCount = await query.CountAsync();
 
-            // Execute query
-            var products = await query.ToListAsync();
+            // Pagination
+            var products = await query
+                .Skip(productParams.PageSize *
+                      (productParams.PageNumber - 1))
+                .Take(productParams.PageSize)
+                .ToListAsync();
 
             // Mapping
-            var result = _mapper.Map<List<ProductDTO>>(products);
+            var result = new ReturnProductDTO
+            {
+                TotalCount = totalCount,
+                Products = _mapper.Map<List<ProductDTO>>(products)
+            };
 
             return result;
         }
-        public async Task<bool> AddAsync(AddProductDto dto)
+        public async Task<bool> AddAsync(AddProductDTO dto)
         {
             if (dto == null)
                 return false;

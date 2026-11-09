@@ -21,8 +21,8 @@ namespace Ecommerce.API.Controllers
             {
                 var products =
                     await _work.ProductRepository.GetAllAsync(productParams);
-                var totalCount = await _work.ProductRepository.CountAsync();
-                return Ok(new Pagination<ProductDTO>(productParams.PageNumber,productParams.PageSize,totalCount,products));
+                //var totalCount = await _work.ProductRepository.CountAsync();
+                return Ok(new Pagination<ProductDTO>(productParams.PageNumber, productParams.PageSize, products.TotalCount, products.Products));
             }
             catch (Exception ex)
             {
@@ -56,7 +56,7 @@ namespace Ecommerce.API.Controllers
         }
 
         [HttpPost("Add-Product")]
-        public async Task <IActionResult>Add(AddProductDto Dto)
+        public async Task <IActionResult>Add(AddProductDTO Dto)
         {
             try
             {
@@ -101,5 +101,7 @@ namespace Ecommerce.API.Controllers
                 return BadRequest(new ResponseAPI(400, ex.InnerException?.Message ?? ex.Message));
             }
         }
+      
+        
     }
 }

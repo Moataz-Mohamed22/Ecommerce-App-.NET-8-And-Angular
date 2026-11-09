@@ -69,7 +69,7 @@ namespace Ecommerce.API.Middleware
                 return (TimeStamp: DateTime.UtcNow, Count: 0);
             });
 
-            if (data.Count >= 8)
+            if (data.Count >= 50)
             {
                 return false;
             }
