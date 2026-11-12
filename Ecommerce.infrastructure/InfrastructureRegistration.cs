@@ -1,20 +1,11 @@
-﻿using Ecommerce.Core.Entities.Product;
-using Ecommerce.Core.Interfaces;
-using Ecommerce.Core.Services;
+﻿using Ecommerce.Core.Interfaces;
 using Ecommerce.Infrastructure.Data;
 using Ecommerce.Infrastructure.Repositories;
-using Ecommerce.Infrastructure.Repositories.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Ecommerce.Infrastructure
 {
     public static class InfrastructureRegistration

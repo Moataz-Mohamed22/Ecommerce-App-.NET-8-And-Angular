@@ -12,12 +12,12 @@ namespace Ecommerce.Core.Entities
         {
             
         }
-        public CustomerCart(int id)
+        public CustomerCart(string id)
         {
             Id = id;
             
         }
-        public int Id { get; set; }
+        public string Id { get; set; }
         public List<CartItem> CartItems { get; set; } = new List<CartItem>();
     }
 }
